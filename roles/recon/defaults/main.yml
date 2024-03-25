@@ -1,0 +1,6 @@
+---
+
+local_bin_path: "/usr/local/bin"
+local_go_bin_path: "/usr/local/go/bin"
+
+masscan_tmp_path: "/tmp/masscan"

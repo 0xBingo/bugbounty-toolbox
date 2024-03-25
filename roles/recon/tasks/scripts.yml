@@ -1,0 +1,6 @@
+---
+
+- name: Deploy subdomains.sh
+  ansible.builtin.template:
+    src: "subdomains.sh.j2"
+    dest: "{{ bugbounty_scripts_path }}/subdomains.sh"

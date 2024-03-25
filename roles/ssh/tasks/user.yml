@@ -1,0 +1,63 @@
+---
+
+- name: Update apt package index
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: Install OpenSSH Server (if not installed)
+  apt:
+    name:
+      - openssh-server
+    state: present
+
+- name: Make sure we have a 'wheel' group
+  group:
+    name: wheel
+    state: present
+
+- name: Allow 'wheel' group to have passwordless sudo
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^%sudoers'
+    line: '%sudoers ALL=(ALL) NOPASSWD: ALL'
+    validate: 'visudo -cf %s'
+
+- name: Add the Ansible user to the sudoers file
+  lineinfile:
+    dest: /etc/sudoers
+    line: "{{ new_admin_user }} ALL=(ALL) NOPASSWD: ALL"
+    validate: 'visudo -cf %s'
+
+- name: Add admin user to sudoers
+  copy:
+    content: "{{ new_admin_user }} ALL=(ALL) NOPASSWD: ALL"
+    dest: /etc/sudoers.d/{{ new_admin_user }}_sudoers
+    mode: '0440'
+
+- name: Create new admin user without password
+  user:
+    name: "{{ new_admin_user }}"
+    password: ""
+    update_password: on_create
+    generate_ssh_key: yes
+    ssh_key_bits: 4096
+    ssh_key_type: rsa
+    groups: sudoers
+    append: true
+    createhome: yes
+    state: present
+    shell: /bin/bash
+
+- name: Add admin SSH public keys
+  authorized_key:
+    user: "{{ new_admin_user }}"
+    key: "{{ item }}"
+  loop: "{{ admin_ssh_pub_keys }}"
+
+- name: Ensure SSH service is running and enabled
+  service:
+    name: sshd
+    state: restarted
+    enabled: yes

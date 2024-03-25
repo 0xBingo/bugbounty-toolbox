@@ -1,0 +1,54 @@
+---
+
+- name: Install curl package
+  ansible.builtin.apt:
+    name:
+      - curl
+    update_cache: yes
+    state: present
+
+- name: "Create Directory '{{ golang_temp_path }}'"
+  ansible.builtin.file:
+    path: "{{ golang_temp_path }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    state: directory
+
+- name: Download golang archive
+  ansible.builtin.get_url:
+    url: "https://go.dev/dl/go1.21.6.linux-amd64.tar.gz"
+    dest: "{{ golang_temp_path }}"
+
+- name: Extract golang archive
+  ansible.builtin.unarchive:
+    src: "{{ golang_temp_path }}/go1.21.6.linux-amd64.tar.gz"
+    dest: "{{ golang_temp_path }}"
+    remote_src: yes
+
+- name: Change ownership of the Go directory
+  ansible.builtin.file:
+    path: "{{ golang_temp_path }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    recurse: yes
+
+- name: Move golang binary
+  ansible.builtin.copy:
+    src: "{{ golang_temp_path }}/go"
+    dest: "/usr/local"
+    remote_src: yes
+
+- name: Add GOROOT to .bashrc
+  ansible.builtin.lineinfile:
+    path: "/home/{{ ansible_user }}/.bashrc"
+    line: "export GOROOT=/usr/local/go"
+    create: yes
+    state: present
+
+- name: Add Go binary path to PATH in .bashrc
+  ansible.builtin.lineinfile:
+    path: "/home/{{ ansible_user }}/.bashrc"
+    regexp: '^export PATH='
+    line: "export PATH=/usr/local/go/bin:$PATH"
+    create: yes
+    state: present

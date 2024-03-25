@@ -1,0 +1,2 @@
+[example]
+test-machine ansible_host=85.31.44.15

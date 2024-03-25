@@ -1,0 +1,9 @@
+---
+
+  - name: Get remote user's home directory
+    command: echo ~
+    register: REMOTE_USER_HOME
+
+  - name: Print user's home directory
+    debug:
+      var: REMOTE_USER_HOME.stdout

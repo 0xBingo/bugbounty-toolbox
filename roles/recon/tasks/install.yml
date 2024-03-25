@@ -1,0 +1,45 @@
+---
+
+- name: Install Httpx
+  ansible.builtin.command:
+    cmd: "go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest"
+  environment:
+    PATH: "{{ local_go_bin_path }}:{{ ansible_env.PATH }}"
+
+- name: Install Subfinder
+  ansible.builtin.command:
+    cmd: "go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest"
+    chdir: "/usr/local/"
+  environment:
+    PATH: "{{ local_go_bin_path }}:{{ ansible_env.PATH }}"
+
+- name: Install Amass
+  ansible.builtin.command:
+    cmd: "go install -v github.com/owasp-amass/amass/v4/...@master"
+    chdir: "/usr/local/"
+  environment:
+    PATH: "{{ local_go_bin_path }}:{{ ansible_env.PATH }}"
+
+- name: Install Assetfinder
+  ansible.builtin.command:
+    cmd: "go install -v github.com/tomnomnom/assetfinder@latest"
+    chdir: "/usr/local/"
+  environment:
+    PATH: "{{ local_go_bin_path }}:{{ ansible_env.PATH }}"
+
+- name: Install Masscan
+  block:
+    - name: Clone Masscan from GitHub
+      ansible.builtin.git:
+        repo: 'https://github.com/robertdavidgraham/masscan.git'
+        dest: "{{ masscan_tmp_path }}"
+        version: master
+
+    - name: Compile Masscan
+      ansible.builtin.make:
+        chdir: "{{ masscan_tmp_path }}"
+
+    - name: Install Masscan
+      ansible.builtin.command: "make install"
+      args:
+        chdir: "{{ masscan_tmp_path }}"

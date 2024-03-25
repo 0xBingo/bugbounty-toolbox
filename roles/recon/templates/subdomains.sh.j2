@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [ "$#" -ne 1 ]; then
+  echo "Usage: $0 <domain>"
+  exit 1
+fi
+
+DOMAIN=$1
+
+subfinder -d $DOMAIN -o subfinder.txt
+amass enum -d $DOMAIN --passive -o amass.txt
+echo $DOMAIN | assetfinder --subs-only | tee assetfinder.txt
+cat subfinder.txt amass.txt assetfinder.txt | sort -u | anew subdomains.txt
+
+cat subdomains.txt | httpx -mc 200 | tee live.txt
+
+echo "Subdomain enumeration completed. Please review the live.txt for live subdomains."

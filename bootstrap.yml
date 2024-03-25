@@ -1,0 +1,8 @@
+---
+- hosts: all
+  become: yes
+  vars:
+    users: '{{ admins }}'
+  roles:
+    - ssh
+    - common

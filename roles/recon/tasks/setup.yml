@@ -1,0 +1,59 @@
+---
+
+- name: Create bugbounty directory
+  ansible.builtin.file:
+    path: "{{ bugbounty_path }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+
+- name: Create bugbounty directory
+  ansible.builtin.file:
+    path: "{{ bugbounty_scripts_path }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+
+- name: Install recon tools dependencies
+  ansible.builtin.apt:
+    name:
+      - git
+      - gcc
+      - make
+      - libpcap-dev
+    update_cache: yes
+    state: latest
+
+- name: Configure go bin PATH
+  block:
+  - name: Get SHELL environment variable
+    ansible.builtin.shell: echo $SHELL
+    register: shell_output
+    changed_when: false
+
+  - name: Parse shell name from SHELL variable
+    ansible.builtin.set_fact:
+      user_shell: "{{ shell_output.stdout.split('/')[-1] }}"
+
+  - name: Determine shell configuration file
+    ansible.builtin.set_fact:
+      shell_config_file: "~/.{{ user_shell }}rc"
+
+  - name: Check if shell configuration file exists
+    ansible.builtin.stat:
+      path: "{{ shell_config_file }}"
+    register: shell_config_stat
+
+  - name: Append to shell configuration file
+    ansible.builtin.lineinfile:
+      path: "{{ shell_config_file }}"
+      line: "export PATH=\"{{ local_go_bin_path }}:$PATH\""
+    when: shell_config_stat.stat.exists
+
+  - name: Append to default shell configuration file
+    ansible.builtin.lineinfile:
+      path: "~/.bashrc"
+      line: "export PATH=\"{{ local_go_bin_path }}:$PATH\""
+    when: not shell_config_stat.stat.exists

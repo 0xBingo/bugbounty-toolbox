@@ -1,0 +1,10 @@
+---
+ansible_python_interpreter: /usr/bin/python3
+
+public_dev: ens4
+remote_user: root
+admins:
+  - name: v
+    ssh_public_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDe1w8HCxcnPOl/EYJYLEA+eKQ1Fgfjq0ueeZs97CP9UirwoLfy+3cyfqJmzUTtxza+xt76aMJZLoyHeJpYTZi26hVrMAK4LTGpFMQ1iR7jL0JFsEjDtk/dX7c2gq5Y1kpq+t/bnlUEIOCtvB9pkvl/TxlsAFLTA3UOquTOxwFQWyOLdz2dMBw5zsUv2Zuz5gCDIIVvx6ySAhsdEl9I5UjCkZb7pd1hvFa7lBSsl431klHthYmjHkBfDXskUj1qjdf/PwiLIGFwut42mhMKsBfxxmTmuJlbHoHMIimyE7HJwkTVXE4GbyA+19d/rUIXWbibGxaWm0T/LQYoBVNazeraqsQ2jdxgS14Tlgkwd1byM7wn65oEnU5g4N9HBuAVIopWDYbApHxybkJWWvTypekytosCs6/c4vUepHiR3t5PV+rc6dnqI1u0QDzi0xMYeB2TvjJRQA+w7wv1Ui2GVqZvy1UiukPSPbdK+t2zpf9shjJ53M3dFaxjOuCkrkCFQFuxW0zsBh95BQb0Bo5oINSopOoTRWG1aHOmWoqhe3CG2OE26Bci/ktdZZ16B1KvceegRQSTw/yILzHE/NWq18a7BM/RBLH2L+igLxRwvEOYKEf97q5z5yG5Wpl27lmu+m6Loye2MfFHtDcu17I+VTns8fkHFOZosWEXTrOnB5k6Sw== 
+    groups:
+      - sudo

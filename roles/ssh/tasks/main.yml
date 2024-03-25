@@ -1,0 +1,11 @@
+---
+- name: configure ssh server
+  template:
+    src: sshd_config
+    dest: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: '0600'
+    validate: /usr/sbin/sshd -t -f %s
+    backup: yes
+  notify: reload ssh service
